@@ -1,0 +1,47 @@
+.search-form__wrap {
+    background: #272956;
+    padding: 30px 0;
+}
+
+#search-form {
+    width: 70%;
+    margin: 0 auto;
+
+    .input-wrap {
+        position: relative;
+        border: 1px solid #282a7b;
+        width: 90%;
+        border-right: none;
+
+        label {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+        }
+
+        input {
+            height: 50px;
+            width: 100%;
+            margin: 0;
+            padding: 0 20px;
+            border: none;
+        }
+    }
+
+}
+
+.btn-submit_wrap {
+    position: relative;
+    z-index: 2;
+    border: 1px solid #282a7b;
+    background: white;
+    width: 10%;
+
+    button {
+        background: none;
+        border: none;
+        height: 100%;
+        width: 100%;
+    }
+}

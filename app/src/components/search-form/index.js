@@ -1,6 +1,5 @@
 import React from 'react'
-import item from './search-item'
-import Styles from './search-form.css'
+import './search-form.scss'
 
 function search() {
     return (
