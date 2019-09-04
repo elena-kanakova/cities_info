@@ -4,19 +4,15 @@ import './search-result.scss'
 function ResultItem({ city }) {
     return (
         <article className="result-item">
-            <h3>Название города: { city.name }</h3>
+            <h3>Название города: {this.props.city}</h3>
             <div className="basic-info_wrap">
                 <div className="basic-info_item flex">
                     <p className="basic-info_item-title">Страна:</p>
-                    <p className="basic-info_item-desc">{ city.country }</p>
+                    <p className="basic-info_item-desc">{this.props.country}</p>
                 </div>
                 <div className="basic-info_item flex">
                     <p className="basic-info_item-title">Временная зона:</p>
-                    <p className="basic-info_item-desc">{ city.timezone }</p>
-                </div>
-                <div className="basic-info_item flex">
-                    <p className="basic-info_item-title">Краткое описание:</p>
-                    <p className="basic-info_item-desc">{ city.desc }</p>
+                    <p className="basic-info_item-desc">{this.props.temp}</p>
                 </div>
             </div>
             <div className="basic-info_link-full">
