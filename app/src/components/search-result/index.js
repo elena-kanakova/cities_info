@@ -2,14 +2,18 @@ import React from 'react'
 import ResultItem from './result-item'
 import Styles from './search-result.scss'
 
-function SearchResult(props) {
-    return (
-        <div className='result_wrap'>
-            { props.cities.map(city => {
-                return <ResultItem key={city.name} city={city} />
-            }) }
-        </div>
-    )
+class SearchResult extends React.Component {
+    render() {
+        return (
+            <div className='result_wrap'>
+                <div>
+                    Result: {this.props.temp}
+                    {this.props.city}
+                    {this.props.country}
+                </div>
+            </div>
+        )
+    }
 }
 
 export default SearchResult;
