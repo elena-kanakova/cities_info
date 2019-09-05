@@ -9,9 +9,10 @@ const API_KEY = '6730c8df6acdcc426b019e426791955d';
 class CityInfo extends React.Component {
 
     state = {
-        temp: undefined,
-        name: undefined,
-        country: undefined
+        fullName: undefined,
+        country: undefined,
+        timeZone: undefined,
+        population: undefined
     };
 
     gettingWeather = async(e) => {
@@ -21,20 +22,45 @@ class CityInfo extends React.Component {
         try {
             if (city) {
                 const api_url = await superagent
-                    .get('https://api.openweathermap.org/data/2.5/weather')
-                    .query({q: city, appid: API_KEY, units: 'metric'});
+                    .get('https://api.teleport.org/api/cities/')
+                    .query({search: city});
                 const data = api_url.body;
                 console.log(data);
 
+                function getValue(object, key) {
+                    let result;
+                    return Object.keys(object).some(function (k) {
+                        if (k === key) {
+                            result = { value: object[k] };
+                            return true;
+                        }
+                        if (object[k] && typeof object[k] === 'object' && (result = getValue(object[k], key))) {
+                            return true;
+                        }
+                    }) && result;
+                }
+                console.log(getValue(data, 'matching_full_name').value);
+                console.log(getValue(data, 'href').value);
+
+                const api_url2 = await superagent.get(`${getValue(data, 'href').value}`);
+                const data2 = api_url2.body;
+                const data3 = getValue(data2, 'city:country').value;
+                const data4 = getValue(data2, 'city:timezone').value;
+                console.log(data2);
+                console.log(getValue(data2, 'population').value);
+                console.log(getValue(data3, 'name').value);
+                console.log(getValue(data4, 'name').value);
+
                 this.setState({
-                    temp: data.main.temp,
-                    city: data.name,
-                    country: data.sys.country
+                    fullName: getValue(data, 'matching_full_name').value,
+                    country: getValue(data3, 'name').value,
+                    timeZone: getValue(data4, 'name').value,
+                    population: getValue(data2, 'population').value
                 })
             }
         } catch (err) {
             console.log('error');
-            }
+        }
     };
 
     render() {
@@ -48,7 +74,7 @@ class CityInfo extends React.Component {
                         <SearchForm weatherMethod={this.gettingWeather}/>
                     </div>
                     <div className="AppResult">
-                        <SearchResult temp={this.state.temp} city={this.state.city} country={this.state.country} />
+                        <SearchResult name={this.state.fullName} country={this.state.country} timeZone={this.state.timeZone} population={this.state.population} />
                     </div>
                 </div>
             </div>
