@@ -12,7 +12,8 @@ class CityInfo extends React.Component {
         fullName: undefined,
         country: undefined,
         timeZone: undefined,
-        population: undefined
+        population: undefined,
+        image: undefined
     };
 
     gettingWeather = async(e) => {
@@ -25,7 +26,18 @@ class CityInfo extends React.Component {
                     .get('https://api.teleport.org/api/cities/')
                     .query({search: city});
                 const apiCitiesSearch = api_url.body;
-                console.log(apiCitiesSearch);
+                const apiCityInfo = await superagent.get(`${getValue(apiCitiesSearch, 'href').value}`);
+                const dataCityBasicInfo = apiCityInfo.body;
+                const dataCityCountry = getValue(dataCityBasicInfo, 'city:country').value;
+                const dataCityTimezone = getValue(dataCityBasicInfo, 'city:timezone').value;
+                const dataCityBasicInfoUrban = getValue(dataCityBasicInfo, 'city:urban_area').value;
+                const dataCityUrbanHref = getValue(dataCityBasicInfoUrban, 'href').value;
+                const apiCityUrban = await superagent.get(`${dataCityUrbanHref}`);
+                const dataCityUrban = apiCityUrban.body;
+                const dataCityUrbanImages = getValue(dataCityUrban, 'ua:images').value;
+                const dataCityImagesHref = getValue(dataCityUrbanImages, 'href').value;
+                const apiCityImages = await superagent.get(`${dataCityImagesHref}`);
+                const dataCityImages = apiCityImages.body;
 
                 function getValue(object, key) {
                     let result;
@@ -39,36 +51,6 @@ class CityInfo extends React.Component {
                         }
                     }) && result;
                 }
-                console.log(getValue(apiCitiesSearch, 'matching_full_name').value);
-                console.log(getValue(apiCitiesSearch, 'href').value);
-
-                const apiCityInfo = await superagent.get(`${getValue(apiCitiesSearch, 'href').value}`);
-                const dataCityBasicInfo = apiCityInfo.body;
-                const dataCityCountry = getValue(dataCityBasicInfo, 'city:country').value;
-                const dataCityTimezone = getValue(dataCityBasicInfo, 'city:timezone').value;
-
-                console.log(dataCityBasicInfo);
-                console.log(getValue(dataCityBasicInfo, 'population').value);
-                console.log(getValue(dataCityCountry, 'name').value);
-                console.log(getValue(dataCityTimezone, 'name').value);
-
-                const dataCityBasicInfoUrban = getValue(dataCityBasicInfo, 'city:urban_area').value;
-                const dataCityUrbanHref = getValue(dataCityBasicInfoUrban, 'href').value;
-                console.log(dataCityUrbanHref);
-
-                const apiCityUrban = await superagent.get(`${dataCityUrbanHref}`);
-                const dataCityUrban = apiCityUrban.body;
-                console.log(dataCityUrban);
-
-                const dataCityUrbanImages = getValue(dataCityUrban, 'ua:images').value;
-                const dataCityImagesHref = getValue(dataCityUrbanImages, 'href').value;
-                console.log('f', dataCityUrbanImages);
-                console.log('data9', dataCityImagesHref);
-
-                const apiCityImages = await superagent.get(`${dataCityImagesHref}`);
-                const dataCityImages = apiCityImages.body;
-                console.log(dataCityImages);
-                console.log(getValue(dataCityImages, 'web').value);
 
                 this.setState({
                     fullName: getValue(apiCitiesSearch, 'matching_full_name').value,
