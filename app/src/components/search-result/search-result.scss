@@ -109,6 +109,11 @@
         color: #001329;
     }
 
+    img {
+        display: block;
+        max-width: 100%;
+    }
+
     :nth-child(2n) {
         .basic-info_link-full {
             .link-about {

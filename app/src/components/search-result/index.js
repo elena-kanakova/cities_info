@@ -8,7 +8,7 @@ class SearchResult extends React.Component {
             <div className='result_wrap'>
                 <div>
                     <article className="result-item">
-                        <h3>Название города: {this.props.fullName}</h3>
+                        <h3>Название города: {this.props.name}</h3>
                         <div className="basic-info_wrap">
                             <div className="basic-info_item flex">
                                 <p className="basic-info_item-title">Местоположение:</p>
@@ -21,6 +21,12 @@ class SearchResult extends React.Component {
                             <div className="basic-info_item flex">
                                 <p className="basic-info_item-title">Население:</p>
                                 <p className="basic-info_item-desc">{this.props.population}</p>
+                            </div>
+                            <div className="basic-info_item flex">
+                                <p className="basic-info_item-title">Фото:</p>
+                            </div>
+                            <div className="basic-info_item flex">
+                                <img src={this.props.image} alt={this.props.name}/>
                             </div>
                         </div>
                         <div className="basic-info_link-full">

@@ -24,8 +24,8 @@ class CityInfo extends React.Component {
                 const api_url = await superagent
                     .get('https://api.teleport.org/api/cities/')
                     .query({search: city});
-                const data = api_url.body;
-                console.log(data);
+                const apiCitiesSearch = api_url.body;
+                console.log(apiCitiesSearch);
 
                 function getValue(object, key) {
                     let result;
@@ -39,23 +39,43 @@ class CityInfo extends React.Component {
                         }
                     }) && result;
                 }
-                console.log(getValue(data, 'matching_full_name').value);
-                console.log(getValue(data, 'href').value);
+                console.log(getValue(apiCitiesSearch, 'matching_full_name').value);
+                console.log(getValue(apiCitiesSearch, 'href').value);
 
-                const api_url2 = await superagent.get(`${getValue(data, 'href').value}`);
-                const data2 = api_url2.body;
-                const data3 = getValue(data2, 'city:country').value;
-                const data4 = getValue(data2, 'city:timezone').value;
-                console.log(data2);
-                console.log(getValue(data2, 'population').value);
-                console.log(getValue(data3, 'name').value);
-                console.log(getValue(data4, 'name').value);
+                const apiCityInfo = await superagent.get(`${getValue(apiCitiesSearch, 'href').value}`);
+                const dataCityBasicInfo = apiCityInfo.body;
+                const dataCityCountry = getValue(dataCityBasicInfo, 'city:country').value;
+                const dataCityTimezone = getValue(dataCityBasicInfo, 'city:timezone').value;
+
+                console.log(dataCityBasicInfo);
+                console.log(getValue(dataCityBasicInfo, 'population').value);
+                console.log(getValue(dataCityCountry, 'name').value);
+                console.log(getValue(dataCityTimezone, 'name').value);
+
+                const dataCityBasicInfoUrban = getValue(dataCityBasicInfo, 'city:urban_area').value;
+                const dataCityUrbanHref = getValue(dataCityBasicInfoUrban, 'href').value;
+                console.log(dataCityUrbanHref);
+
+                const apiCityUrban = await superagent.get(`${dataCityUrbanHref}`);
+                const dataCityUrban = apiCityUrban.body;
+                console.log(dataCityUrban);
+
+                const dataCityUrbanImages = getValue(dataCityUrban, 'ua:images').value;
+                const dataCityImagesHref = getValue(dataCityUrbanImages, 'href').value;
+                console.log('f', dataCityUrbanImages);
+                console.log('data9', dataCityImagesHref);
+
+                const apiCityImages = await superagent.get(`${dataCityImagesHref}`);
+                const dataCityImages = apiCityImages.body;
+                console.log(dataCityImages);
+                console.log(getValue(dataCityImages, 'web').value);
 
                 this.setState({
-                    fullName: getValue(data, 'matching_full_name').value,
-                    country: getValue(data3, 'name').value,
-                    timeZone: getValue(data4, 'name').value,
-                    population: getValue(data2, 'population').value
+                    fullName: getValue(apiCitiesSearch, 'matching_full_name').value,
+                    country: getValue(dataCityCountry, 'name').value,
+                    timeZone: getValue(dataCityTimezone, 'name').value,
+                    population: getValue(dataCityBasicInfo, 'population').value,
+                    image: getValue(dataCityImages, 'web').value
                 })
             }
         } catch (err) {
@@ -74,7 +94,7 @@ class CityInfo extends React.Component {
                         <SearchForm weatherMethod={this.gettingWeather}/>
                     </div>
                     <div className="AppResult">
-                        <SearchResult name={this.state.fullName} country={this.state.country} timeZone={this.state.timeZone} population={this.state.population} />
+                        <SearchResult name={this.state.fullName} country={this.state.country} timeZone={this.state.timeZone} population={this.state.population} image={this.state.image} />
                     </div>
                 </div>
             </div>
