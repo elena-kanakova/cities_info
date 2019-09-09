@@ -1,14 +1,16 @@
 import React from 'react'
 import './index.css';
 import SearchForm from './components/search-form/index'
-import SearchResult from './components/search-result/index'
+//import SearchResult from './components/search-result/index'
 import superagent from "superagent";
+import ResultItem from "./components/search-result/result-item";
 
 const API_KEY = '6730c8df6acdcc426b019e426791955d';
 
 class CityInfo extends React.Component {
 
     state = {
+        res: [],
         fullName: undefined,
         country: undefined,
         timeZone: undefined,
@@ -38,6 +40,8 @@ class CityInfo extends React.Component {
                 const dataCityImagesHref = getValue(dataCityUrbanImages, 'href').value;
                 const apiCityImages = await superagent.get(`${dataCityImagesHref}`);
                 const dataCityImages = apiCityImages.body;
+                const resSearch = getValue(apiCitiesSearch, '_embedded').value;
+                console.log(resSearch);
 
                 function getValue(object, key) {
                     let result;
@@ -53,6 +57,7 @@ class CityInfo extends React.Component {
                 }
 
                 this.setState({
+                    res: getValue(resSearch, 'city:search-results').value,
                     fullName: getValue(apiCitiesSearch, 'matching_full_name').value,
                     country: getValue(dataCityCountry, 'name').value,
                     timeZone: getValue(dataCityTimezone, 'name').value,
@@ -66,6 +71,7 @@ class CityInfo extends React.Component {
     };
 
     render() {
+
         return (
             <div className="container">
                 <header id="header" className="flex center">
@@ -76,7 +82,13 @@ class CityInfo extends React.Component {
                         <SearchForm weatherMethod={this.gettingWeather}/>
                     </div>
                     <div className="AppResult">
-                        <SearchResult name={this.state.fullName} country={this.state.country} timeZone={this.state.timeZone} population={this.state.population} image={this.state.image} />
+                        <div className='result_wrap'>
+                            <div>
+                                { this.state.res.map(item => {
+                                    return <ResultItem key={item.id} name={item.matching_full_name} country={item.country} timeZone={item.timeZone} population={item.population} image={item.image} />
+                                }) }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
