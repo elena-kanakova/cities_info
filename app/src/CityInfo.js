@@ -5,69 +5,107 @@ import SearchForm from './components/search-form/index'
 import superagent from "superagent";
 import ResultItem from "./components/search-result/result-item";
 
-const API_KEY = '6730c8df6acdcc426b019e426791955d';
+/*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
 
 class CityInfo extends React.Component {
+    constructor(props) {
+        super(props);
 
-    state = {
-        res: [],
-        fullName: undefined,
-        country: undefined,
-        timeZone: undefined,
-        population: undefined,
-        image: undefined
-    };
+        this.state = {
+            cityInfo: []
+        };
+    }
 
-    gettingWeather = async(e) => {
+    getCityInfo = async (e) => {
         e.preventDefault();
         const city = e.target.elements.city.value;
-
         try {
             if (city) {
-                const api_url = await superagent
+                const cityList = await superagent
                     .get('https://api.teleport.org/api/cities/')
-                    .query({search: city});
-                const apiCitiesSearch = api_url.body;
-                const apiCityInfo = await superagent.get(`${getValue(apiCitiesSearch, 'href').value}`);
-                const dataCityBasicInfo = apiCityInfo.body;
-                const dataCityCountry = getValue(dataCityBasicInfo, 'city:country').value;
-                const dataCityTimezone = getValue(dataCityBasicInfo, 'city:timezone').value;
-                const dataCityBasicInfoUrban = getValue(dataCityBasicInfo, 'city:urban_area').value;
-                const dataCityUrbanHref = getValue(dataCityBasicInfoUrban, 'href').value;
-                const apiCityUrban = await superagent.get(`${dataCityUrbanHref}`);
-                const dataCityUrban = apiCityUrban.body;
-                const dataCityUrbanImages = getValue(dataCityUrban, 'ua:images').value;
-                const dataCityImagesHref = getValue(dataCityUrbanImages, 'href').value;
-                const apiCityImages = await superagent.get(`${dataCityImagesHref}`);
-                const dataCityImages = apiCityImages.body;
-                const resSearch = getValue(apiCitiesSearch, '_embedded').value;
-                console.log(resSearch);
+                    .query({search: city})
+                    .then(({body}) => Promise.all(body._embedded['city:search-results'].map(item => superagent.get(item._links['city:item'].href))))
+                    .then(result => result.map(item => item.body));
 
-                function getValue(object, key) {
-                    let result;
-                    return Object.keys(object).some(function (k) {
-                        if (k === key) {
-                            result = { value: object[k] };
-                            return true;
-                        }
-                        if (object[k] && typeof object[k] === 'object' && (result = getValue(object[k], key))) {
-                            return true;
-                        }
-                    }) && result;
-                }
 
-                this.setState({
-                    res: getValue(resSearch, 'city:search-results').value,
-                    fullName: getValue(apiCitiesSearch, 'matching_full_name').value,
-                    country: getValue(dataCityCountry, 'name').value,
-                    timeZone: getValue(dataCityTimezone, 'name').value,
-                    population: getValue(dataCityBasicInfo, 'population').value,
-                    image: getValue(dataCityImages, 'web').value
-                })
+                const urbanArea = await Promise.all(cityList.map(city => superagent.get(city._links['city:urban_area'].href)))
+                    .then(result => result.map(item => item.body));
+
+                /*console.log(cities);
+                console.log(cityDetails);*/
+
+
+                let mumu = {
+                    'a': {'name': '1'},
+                    'b': {'name': '2'}
+                };
+
+                Object.keys( mumu).map((key) => {
+                    let mumuObj =  mumu[key];
+                    console.log(mumuObj);
+                });
+
+                let filteredCityList = [];
+                cityList.forEach((city) => {
+                    const {name, geoname_id, population} = city;
+
+                    debugger;
+
+                    filteredCityList.push({
+                        name: name,
+                        continent: '',//city.continent,
+                        population: population,
+                        geoname_id: geoname_id
+                    });
+                });
+
+                if (cityList)
+                    this.setState({cityList, filteredCityList});
             }
-        } catch (err) {
+        } catch (e) {
             console.log('error');
         }
+    };
+
+    /*setCityInfo = () => {
+        this.getCityInfo().then((cityInfo) => {
+            const { name, population } = cityInfo;
+
+            this.setState ({
+                cityInfo: {
+                    name: name,
+                    continent: this.body.continent,
+                    population: population
+                }
+            })
+        });
+    };*/
+
+    getCityItem = (name) => {
+        return (
+            <ResultItem name={name}/>
+        )
+    };
+
+    showInfo = () => {
+        const cityList = this.state.cityList;
+        debugger
+
+        if (cityList)
+            return Object.keys(cityList).map((key) => {
+                let mumuObj = cityList[key];
+                console.log(mumuObj);
+
+                return <ResultItem key={key} mumu2={mumuObj}/>
+            });
+        /*return Object.keys(cityInfo).map((item, index) => {
+            const {image, timeZone, population, name, continent} = '';
+
+            debugger
+            let mumuObj = {name: "123", 'image': '11'};
+            return <ResultItem key={index} mumu2={mumuObj} image={image} name={item} continent={continent}
+                               timeZone={timeZone} population={population}/>
+        });*/
     };
 
     render() {
@@ -79,14 +117,12 @@ class CityInfo extends React.Component {
                 </header>
                 <div className="AppContent">
                     <div className="AppForm">
-                        <SearchForm weatherMethod={this.gettingWeather}/>
+                        <SearchForm city={this.getCityInfo}/>
                     </div>
                     <div className="AppResult">
                         <div className='result_wrap'>
                             <div>
-                                { this.state.res.map(item => {
-                                    return <ResultItem key={item.id} name={item.matching_full_name} country={item.country} timeZone={item.timeZone} population={item.population} image={item.image} />
-                                }) }
+                                Имя: {this.showInfo()}
                             </div>
                         </div>
                     </div>

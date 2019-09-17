@@ -2,6 +2,7 @@ import React from 'react'
 import './search-result.scss'
 
 class ResultItem extends React.Component {
+    //debugger
     render() {
         return (
             <article className="result-item">
@@ -9,11 +10,11 @@ class ResultItem extends React.Component {
                 <div className="basic-info_wrap">
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Местоположение:</p>
-                        <p className="basic-info_item-desc">{this.props.country}</p>
+                        <p className="basic-info_item-desc">{this.props.continent}</p>{this.props.mumu2.name}
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Временная зона:</p>
-                        <p className="basic-info_item-desc">{this.props.timeZone}</p>
+                        <p className="basic-info_item-desc">{this.props.timeZone}</p>{this.props.mumu2.image}
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Население:</p>
