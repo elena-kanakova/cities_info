@@ -6,19 +6,19 @@ class ResultItem extends React.Component {
     render() {
         return (
             <article className="result-item">
-                <h3>Название города: {this.props.name}</h3>
+                <h3>Название города: {this.props.city.name}</h3>
                 <div className="basic-info_wrap">
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Местоположение:</p>
-                        <p className="basic-info_item-desc">{this.props.continent}</p>{this.props.mumu2.name}
+                        <p className="basic-info_item-desc">{this.props.continent}</p>{/*{this.props.mumu2.continent}*/}
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Временная зона:</p>
-                        <p className="basic-info_item-desc">{this.props.timeZone}</p>{this.props.mumu2.image}
+                        <p className="basic-info_item-desc">{this.props.timeZone}</p>{/*{this.props.mumu2.image}*/}
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Население:</p>
-                        <p className="basic-info_item-desc">{this.props.population}</p>
+                        <p className="basic-info_item-desc">{this.props.city.population}</p>
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Фото:</p>

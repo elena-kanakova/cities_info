@@ -32,7 +32,7 @@ class CityInfo extends React.Component {
                     .then(result => result.map(item => item.body));
 
                 /*console.log(cities);
-                console.log(cityDetails);*/
+                console.log(cityDetails);
 
 
                 let mumu = {
@@ -60,14 +60,27 @@ class CityInfo extends React.Component {
                 });
 
                 if (cityList)
-                    this.setState({cityList, filteredCityList});
+                    this.setState({cityList, filteredCityList});*/
+                console.log('cityList - ', typeof cityList, cityList);
+
+                debugger;
+                cityList.map((city) => {
+                    let {name, population} = city;
+
+                    this.setState({
+                        cityInfo: {
+                            name: name,
+                            population: population
+                        }
+                    });
+                })
             }
         } catch (e) {
             console.log('error');
         }
     };
 
-    /*setCityInfo = () => {
+   /* setCityInfo = () => {
         this.getCityInfo().then((cityInfo) => {
             const { name, population } = cityInfo;
 
@@ -81,22 +94,22 @@ class CityInfo extends React.Component {
         });
     };*/
 
-    getCityItem = (name) => {
+    /*getCityItem = (name) => {
         return (
             <ResultItem name={name}/>
         )
-    };
+    };*/
 
     showInfo = () => {
-        const cityList = this.state.cityList;
+        const cityList = this.state.cityInfo;
         debugger
 
         if (cityList)
             return Object.keys(cityList).map((key) => {
-                let mumuObj = cityList[key];
-                console.log(mumuObj);
+                let cities = cityList[key];
+                console.log(cities);
 
-                return <ResultItem key={key} mumu2={mumuObj}/>
+                return <ResultItem key={key} cityInfo={cities}/>
             });
         /*return Object.keys(cityInfo).map((item, index) => {
             const {image, timeZone, population, name, continent} = '';
