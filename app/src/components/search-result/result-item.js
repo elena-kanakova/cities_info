@@ -6,7 +6,7 @@ class ResultItem extends React.Component {
     render() {
         return (
             <article className="result-item">
-                <h3>Название города: {this.props.cityDetail.cityInfo.name}</h3>
+                <h3>Название города: {this.props.cityDetail.name}</h3>
                 <div className="basic-info_wrap">
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Местоположение:</p>

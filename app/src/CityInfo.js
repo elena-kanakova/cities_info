@@ -27,24 +27,18 @@ class CityInfo extends React.Component {
                     .then(({body}) => Promise.all(body._embedded['city:search-results'].map(item => superagent.get(item._links['city:item'].href))))
                     .then(result => result.map(item => item.body));
 
+                console.log(cityList);
 
                 const urbanArea = await Promise.all(cityList.map(city => superagent.get(city._links['city:urban_area'].href)))
                     .then(result => result.map(item => item.body));
 
                 debugger;
-                cityList.map((city) => {
-                    let {name, population} = city;
-
-                    this.setState({
-                        cityInfo: {
-                            name: name,
-                            population: population
-                        }
-                    });
-                })
+                this.setState({
+                    cityInfo: cityList
+                });
             }
         } catch (e) {
-            console.log('error');
+            console.log(e);
         }
     };
 
@@ -53,9 +47,8 @@ class CityInfo extends React.Component {
         debugger
 
         if (cityList)
-            return Object.keys(cityList).map((key) => {
-                let cityDetails = cityList[key];
-                return <ResultItem key={key} cityDetail={cityDetails}/>
+            return cityList.map((city, index) => {
+                return <ResultItem index={index} cityDetail={city}/>
             });
     };
 
@@ -73,7 +66,7 @@ class CityInfo extends React.Component {
                     <div className="AppResult">
                         <div className='result_wrap'>
                             <div>
-                                Имя: {this.showInfo()}
+                                {this.showInfo()}
                             </div>
                         </div>
                     </div>
