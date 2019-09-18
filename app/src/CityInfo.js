@@ -31,38 +31,6 @@ class CityInfo extends React.Component {
                 const urbanArea = await Promise.all(cityList.map(city => superagent.get(city._links['city:urban_area'].href)))
                     .then(result => result.map(item => item.body));
 
-                /*console.log(cities);
-                console.log(cityDetails);
-
-
-                let mumu = {
-                    'a': {'name': '1'},
-                    'b': {'name': '2'}
-                };
-
-                Object.keys( mumu).map((key) => {
-                    let mumuObj =  mumu[key];
-                    console.log(mumuObj);
-                });
-
-                let filteredCityList = [];
-                cityList.forEach((city) => {
-                    const {name, geoname_id, population} = city;
-
-                    debugger;
-
-                    filteredCityList.push({
-                        name: name,
-                        continent: '',//city.continent,
-                        population: population,
-                        geoname_id: geoname_id
-                    });
-                });
-
-                if (cityList)
-                    this.setState({cityList, filteredCityList});*/
-                console.log('cityList - ', typeof cityList, cityList);
-
                 debugger;
                 cityList.map((city) => {
                     let {name, population} = city;
@@ -80,45 +48,15 @@ class CityInfo extends React.Component {
         }
     };
 
-   /* setCityInfo = () => {
-        this.getCityInfo().then((cityInfo) => {
-            const { name, population } = cityInfo;
-
-            this.setState ({
-                cityInfo: {
-                    name: name,
-                    continent: this.body.continent,
-                    population: population
-                }
-            })
-        });
-    };*/
-
-    /*getCityItem = (name) => {
-        return (
-            <ResultItem name={name}/>
-        )
-    };*/
-
     showInfo = () => {
         const cityList = this.state.cityInfo;
         debugger
 
         if (cityList)
             return Object.keys(cityList).map((key) => {
-                let cities = cityList[key];
-                console.log(cities);
-
-                return <ResultItem key={key} cityInfo={cities}/>
+                let cityDetails = cityList[key];
+                return <ResultItem key={key} cityDetail={cityDetails}/>
             });
-        /*return Object.keys(cityInfo).map((item, index) => {
-            const {image, timeZone, population, name, continent} = '';
-
-            debugger
-            let mumuObj = {name: "123", 'image': '11'};
-            return <ResultItem key={index} mumu2={mumuObj} image={image} name={item} continent={continent}
-                               timeZone={timeZone} population={population}/>
-        });*/
     };
 
     render() {
