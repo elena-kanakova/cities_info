@@ -4,6 +4,8 @@ import './search-result.scss'
 class ResultItem extends React.Component {
     //debugger
     render() {
+        debugger;
+
         return (
             <article className="result-item">
                 <h3>Название города: {this.props.cityDetail.name}</h3>
@@ -24,7 +26,7 @@ class ResultItem extends React.Component {
                         <p className="basic-info_item-title">Фото:</p>
                     </div>
                     <div className="basic-info_item flex">
-                        <img src={this.props.cityDetail.image} alt={this.props.cityDetail.name}/>
+                        <img src={this.props.cityDetail.images.photos[0].image.web} alt={this.props.cityDetail.name}/>
                     </div>
                 </div>
                 <div className="basic-info_link-full">
