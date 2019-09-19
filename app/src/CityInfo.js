@@ -18,22 +18,13 @@ class CityInfo extends React.Component {
 
     getCityInfo = async (e) => {
         e.preventDefault();
-        const inputValue = e.target.elements.city.value;
-
-        /*keysList = [
-            {
-                link: 'city:urban_area',
-                field: 'urbanArea',
-                path:
-            },
-            'city:country','city:timezone','city:alternate-names'
-        ];*/
+        const searchValue = e.target.elements.city.value;
 
         try {
-            if (inputValue) {
+            if (searchValue) {
                 const cityList = await superagent
                     .get('https://api.teleport.org/api/cities/')
-                    .query({search: inputValue})
+                    .query({search: searchValue})
                     .then(({body}) => Promise.all(body._embedded['city:search-results'].map(item => superagent.get(item._links['city:item'].href))))
                     .then(result => result.map(item => item.body));
 

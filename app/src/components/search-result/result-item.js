@@ -8,7 +8,7 @@ class ResultItem extends React.Component {
           name: PropTypes.string.isRequired,
           urbanCountry: PropTypes.string.isRequired,
           urbanTimezone: PropTypes.string.isRequired,
-          population: PropTypes.string.isRequired,
+          population: PropTypes.number.isRequired,
           image: PropTypes.string.isRequired
         }).isRequired
     };
