@@ -10,11 +10,11 @@ class ResultItem extends React.Component {
                 <div className="basic-info_wrap">
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Местоположение:</p>
-                        <p className="basic-info_item-desc"></p>
+                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanCountry.name}</p>
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Временная зона:</p>
-                        <p className="basic-info_item-desc">{this.props.cityDetail.timeZone}</p>
+                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanTimezone.iana_name}</p>
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Население:</p>
