@@ -19,6 +19,16 @@ class CityInfo extends React.Component {
     getCityInfo = async (e) => {
         e.preventDefault();
         const inputValue = e.target.elements.city.value;
+
+        /*keysList = [
+            {
+                link: 'city:urban_area',
+                field: 'urbanArea',
+                path:
+            },
+            'city:country','city:timezone','city:alternate-names'
+        ];*/
+
         try {
             if (inputValue) {
                 const cityList = await superagent
@@ -27,32 +37,38 @@ class CityInfo extends React.Component {
                     .then(({body}) => Promise.all(body._embedded['city:search-results'].map(item => superagent.get(item._links['city:item'].href))))
                     .then(result => result.map(item => item.body));
 
-                console.log(cityList);
+                const cityNames = [];
 
-                await Promise.all(cityList.map(city => superagent.get(city._links['city:urban_area'].href)
-                    .then(result => {
-                        city.urbanArea = result.body;
-                    })));
+                const cityItemList = cityList.map(city => {
+                    const cityItem = {
+                        name: city.name,
+                        population: city.population
+                    };
 
-                await Promise.all(cityList.map(city => superagent.get(city._links['city:country'].href)
-                    .then(result => {
-                        city.urbanCountry = result.body;
-                    })));
+                    cityNames.push(cityItem);
 
-                await Promise.all(cityList.map(city => superagent.get(city._links['city:timezone'].href)
-                    .then(result => {
-                        city.urbanTimezone = result.body;
-                    })));
+                    const images = superagent.get(city._links['city:urban_area'].href)
+                        .then(result => superagent.get(result.body._links['ua:images'].href))
+                        .then(result => {
+                            cityItem.image = result.body.photos[0].image.web;
+                        });
 
-                await Promise.all(cityList.map(city => superagent.get(city._links['city:alternate-names'].href)
-                    .then(result => {
-                        city.urbanAlternateNames = result.body;
-                    })));
+                    const country = superagent.get(city._links['city:country'].href)
+                        .then(result => {
+                            cityItem.urbanCountry = result.body.name;
+                        });
 
-                debugger;
-                this.setState({
-                    cityInfo: cityList
+                    const timeZone = superagent.get(city._links['city:timezone'].href)
+                        .then(result => {
+                            cityItem.urbanTimezone = result.body.iana_name;
+                        });
+
+                    return Promise.all([images, country, timeZone]);
                 });
+
+                Promise.all(cityItemList).then(result => this.setState({
+                    cityInfo: cityNames
+                }));
             }
         } catch (e) {
             console.log(e);
