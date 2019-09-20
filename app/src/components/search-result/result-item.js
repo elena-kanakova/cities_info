@@ -35,7 +35,7 @@ class ResultItem extends React.Component {
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Фото:</p>
                     </div>
-                    <div className="basic-info_item flex">
+                    <div className="basic-info_item item-photo flex">
                         <img src={this.props.cityDetail.image} alt={this.props.cityDetail.name}/>
                     </div>
                 </div>

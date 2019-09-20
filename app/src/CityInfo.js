@@ -4,6 +4,8 @@ import SearchForm from './components/search-form/index'
 //import SearchResult from './components/search-result/index'
 import superagent from "superagent";
 import ResultItem from "./components/search-result/result-item";
+import NoPhoto from "./img/img_thumb_big.php-600x315.jpeg";
+import FullInfo from "./components/page-info";
 
 /*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
 
@@ -38,21 +40,34 @@ class CityInfo extends React.Component {
 
                     cityNames.push(cityItem);
 
-                    const images = superagent.get(city._links['city:urban_area'].href)
-                        .then(result => superagent.get(result.body._links['ua:images'].href))
-                        .then(result => {
-                            cityItem.image = result.body.photos[0].image.web;
-                        });
+                    let images, country, timeZone;
+                    if (city._links['city:urban_area']) {
+                        images = superagent.get(city._links['city:urban_area'].href)
+                            .then(result => superagent.get(result.body._links['ua:images'].href))
+                            .then(result => {
+                                cityItem.image = result.body.photos[0].image.web;
+                            });
+                    } else {
+                        cityItem.image = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
+                    }
 
-                    const country = superagent.get(city._links['city:country'].href)
-                        .then(result => {
-                            cityItem.urbanCountry = result.body.name;
-                        });
+                    if (city._links['city:country']) {
+                        country = superagent.get(city._links['city:country'].href)
+                            .then(result => {
+                                cityItem.urbanCountry = result.body.name;
+                            });
+                    } else {
+                        cityItem.urbanCountry = 'Информация по местоположению отсуствует'
+                    }
 
-                    const timeZone = superagent.get(city._links['city:timezone'].href)
-                        .then(result => {
-                            cityItem.urbanTimezone = result.body.iana_name;
-                        });
+                    if (city._links['city:timezone']) {
+                        timeZone = superagent.get(city._links['city:timezone'].href)
+                            .then(result => {
+                                cityItem.urbanTimezone = result.body.iana_name;
+                            });
+                    } else {
+                        cityItem.urbanCountry = 'Информация по временной зоне отсуствует'
+                    }
 
                     return Promise.all([images, country, timeZone]);
                 });
@@ -61,6 +76,7 @@ class CityInfo extends React.Component {
                     cityInfo: cityNames
                 }));
             }
+
         } catch (e) {
             console.log(e);
         }
@@ -70,13 +86,19 @@ class CityInfo extends React.Component {
         const cityInfo = this.state.cityInfo;
         debugger
 
-        if (cityInfo)
-            return cityInfo.map((city, index) => {debugger
-                return <ResultItem key={index} cityDetail={city}/>;
-            });
+
+        if (!cityInfo || cityInfo.length === 0) {
+            return <p>Введите название города</p>
+        }
+
+        return cityInfo.map((city, index) => {
+            debugger
+            return <ResultItem key={index} cityDetail={city}/>;
+        });
     };
 
     render() {
+        const cityInfo = this.state.cityInfo;
 
         return (
             <div className="container">

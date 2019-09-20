@@ -124,3 +124,13 @@
         }
     }
 }
+
+.basic-info_item.item-photo {
+    max-height: 268px;
+    overflow: hidden;
+
+    img {
+        max-height: inherit;
+        margin: 0 auto;
+    }
+}
