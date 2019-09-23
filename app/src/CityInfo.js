@@ -84,15 +84,14 @@ class CityInfo extends React.Component {
 
     showInfo = () => {
         const cityInfo = this.state.cityInfo;
-        debugger
-
+        //debugger
 
         if (!cityInfo || cityInfo.length === 0) {
             return <p>Введите название города</p>
         }
 
         return cityInfo.map((city, index) => {
-            debugger
+            //debugger
             return <ResultItem key={index} cityDetail={city}/>;
         });
     };
