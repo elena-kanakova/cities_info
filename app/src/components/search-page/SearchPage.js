@@ -1,7 +1,14 @@
-import React from 'react';
-import superagent from 'superagent';
+import React from 'react'
+import SearchForm from '../search-form'
+import ResultItem from "../search-result/ResultItem";
+import Agent from "../../services/agent";
+import PropTypes from "prop-types";
+import superagent from "superagent";
+import {Link} from 'react-router-dom';
 
-class Agent extends React.Component {
+/*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
+
+class SearchPage extends React.Component {
     constructor(props) {
         super(props);
 
@@ -73,7 +80,44 @@ class Agent extends React.Component {
             console.log(e);
         }
     };
+
+    debugger;
+    showInfo = () => {
+        const cityInfo = this.state.cityInfo;
+        //debugger
+
+        if (!cityInfo || cityInfo.length === 0) {
+            return <p>Введите название города</p>
+        }
+
+        return cityInfo.map((city, index) => {
+            //debugger
+            return <ResultItem key={index} cityDetail={city}/>;
+        });
+    };
+
+    render() {
+        debugger
+        return (
+            <div className="container">
+                <header id="header" className="flex center">
+                    <h1>Узнай про город своей мечты</h1>
+                </header>
+                <div className="AppContent">
+                    <div className="AppForm">
+                        <SearchForm city={this.getCityInfo}/>
+                    </div>
+                    <div className="AppResult">
+                        <div className='result_wrap'>
+                            <div>
+                                {this.showInfo()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
-export default new Agent();
-export { Agent };
+export default SearchPage;

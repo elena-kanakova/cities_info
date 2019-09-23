@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import './search-result.scss'
+import {Link} from "react-router-dom";
 
 class ResultItem extends React.Component {
     static propTypes = {
@@ -40,7 +41,7 @@ class ResultItem extends React.Component {
                     </div>
                 </div>
                 <div className="basic-info_link-full">
-                    <a href="#" className="link-about">Посмотреть полную информацию</a>
+                    <Link to={`/name=${this.props.cityDetail.name}`}><p className="link-about">Посмотреть полную информацию</p></Link>
                 </div>
             </article>
         )
