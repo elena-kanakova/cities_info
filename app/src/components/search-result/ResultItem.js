@@ -14,25 +14,50 @@ class ResultItem extends React.Component {
         }).isRequired
     };
 
+    outputNameDictionary = {
+        name: 'Название города',
+        population: 'Население',
+        'city:admin1_division': 'Админ округ',
+        'city:country': 'Страна',
+        'city:timezone': 'Временная зона',
+        'city:urban_area': 'Район',
+        image: 'Фото'
+    };
+
     render() {
         debugger;
+
+        const getUserItem = (name, content) => {
+
+            let outputName = this.outputNameDictionary[name];
+
+            return (
+                <div className="basic-info_item flex">
+                    <p className="basic-info_item-title">{outputName}</p>
+                    <p className="basic-info_item-desc">{content}</p>
+                </div>
+            )
+        };
+
+        const userInfoItems = () => {
+            const cityInfo = this.props.cityDetail;
+
+            return Object.keys(cityInfo).map((key) => (getUserItem(key, cityInfo[key])));
+        };
 
         return (
             <article className="result-item">
                 <h3>Название города: {this.props.cityDetail.name}</h3>
                 <div className="basic-info_wrap">
-                    <div className="basic-info_item flex">
-                        <p className="basic-info_item-title">Местоположение:</p>
-                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanCountry}</p>
-                    </div>
-                    <div className="basic-info_item flex">
+                    {userInfoItems()}
+                   {/*<div className="basic-info_item flex">
                         <p className="basic-info_item-title">Временная зона:</p>
                         <p className="basic-info_item-desc">{this.props.cityDetail.urbanTimezone}</p>
-                    </div>
-                    <div className="basic-info_item flex">
+                    </div>*/}
+                    {/*<div className="basic-info_item flex">
                         <p className="basic-info_item-title">Население:</p>
                         <p className="basic-info_item-desc">{this.props.cityDetail.population}</p>
-                    </div>
+                    </div>*/}
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Фото:</p>
                     </div>

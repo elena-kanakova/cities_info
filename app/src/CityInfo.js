@@ -10,12 +10,10 @@ class CityInfo extends React.Component {
     render() {
         return (
             <Router>
-                <div className="container">
-                    <Switch>
-                        <Route path="/" exact component={SearchPage} />
-                        <Route path="/:id" component={CityPage} />
-                    </Switch>
-                </div>
+                <Switch>
+                    <Route path="/" exact component={SearchPage} />
+                    <Route path="/:id" component={CityPage} />
+                </Switch>
             </Router>
         );
     }
