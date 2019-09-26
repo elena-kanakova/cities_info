@@ -4,8 +4,6 @@ import ResultItem from "../search-result/ResultItem";
 import Agent from "../../services/agent";
 import superagent from "superagent";
 
-const CityListData = React.createContext;
-
 class SearchPage extends React.Component {
     constructor(props) {
         super(props);
@@ -21,12 +19,6 @@ class SearchPage extends React.Component {
 
         try {
             if (searchValue) {
-                const cityList = await superagent
-                    .get('https://api.teleport.org/api/cities/')
-                    .query({search: searchValue})
-                    .then(({body}) => Promise.all(body._embedded['city:search-results'].map(item => superagent.get(item._links['city:item'].href))))
-                    .then(result => result.map(item => item.body));
-                console.log(cityList);
 
                 const cityNames = [];
 
