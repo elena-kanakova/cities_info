@@ -4,15 +4,6 @@ import './search-result.scss'
 import {Link} from "react-router-dom";
 
 class ResultItem extends React.Component {
-    /*static propTypes = {
-      cityDetail: PropTypes.shape({
-          name: PropTypes.string.isRequired,
-          urbanCountry: PropTypes.string.isRequired,
-          urbanTimezone: PropTypes.string.isRequired,
-          population: PropTypes.number.isRequired,
-          image: PropTypes.string.isRequired
-        }).isRequired
-    };*/
 
     outputNameDictionary = {
         name: 'Название города',
@@ -55,7 +46,7 @@ class ResultItem extends React.Component {
                     </div>
                 </div>
                 <div className="basic-info_link-full">
-                    <Link to={`/name=${this.props.cityDetail.name}`}><p className="link-about">Посмотреть полную информацию</p></Link>
+                    <Link to={`/city/${this.props.cityDetail.geoname_id}`}><p className="link-about">Посмотреть полную информацию</p></Link>
                 </div>
             </article>
         )

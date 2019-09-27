@@ -3,18 +3,13 @@ import SearchForm from '../search-form'
 import ResultItem from "../search-result/ResultItem";
 import Agent from "../../services/agent";
 import superagent from "superagent";
-
-const CityContext = React.createContext({});
-const CityProvider = CityContext.Provider;
-const CityConsumer = CityContext.Consumer;
+import CityContext from '../../services/cityDataProvider';
 
 class SearchPage extends React.Component {
+    static contextType = CityContext;
+
     constructor(props) {
         super(props);
-
-        this.state = {
-            cityInfo: []
-        };
     }
 
     getCityInfo = async (e) => {
@@ -24,25 +19,29 @@ class SearchPage extends React.Component {
         try {
             if (searchValue) {
 
-                const getCityInfo = await Agent.getCityInfo();
-
+                const getCityInfo = await Agent.getCityInfo(e);
+                debugger;
                 const cityNames = [];
 
-                const cityItemList = cityList.map(city => {
+                debugger;
+                const cityItemList = getCityInfo[0].map(city => {
                     const cityItem = {
                         name: city.name,
-                        population: city.population
+                        population: city.population,
+                        geoname_id: city.geoname_id
                     };
 
                     let images;
                     let link = cityItem.link;
 
+                    debugger;
                     const getLinkNames = Object.keys(city._links).map((_linkName) => {
                         if (city._links[_linkName].name) {
                             cityItem[_linkName] = city._links[_linkName].name;
                         }
                     });
 
+                    debugger;
                     if (city._links['city:urban_area']) {
                         images = superagent.get(city._links['city:urban_area'].href)
                             .then(result => superagent.get(result.body._links['ua:images'].href))
@@ -53,14 +52,17 @@ class SearchPage extends React.Component {
                         cityItem.image = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
                     }
 
+                    debugger;
                     cityNames.push(cityItem);
 
+                    debugger;
                     return Promise.all([images, getLinkNames, link]);
                 });
 
-                Promise.all(cityItemList).then(result => this.setState({
-                    cityInfo: cityNames
-                }));
+                debugger;
+                Promise.all(cityItemList).then(result => {
+                    this.props.getCityData(cityNames);
+                });
             }
 
         } catch (e) {
@@ -70,15 +72,15 @@ class SearchPage extends React.Component {
 
     debugger;
     showInfo = () => {
-        const cityInfo = this.state.cityInfo;
-        //debugger
+        const cityInfo = this.context.cityInfo;
+        debugger
 
         if (!cityInfo || cityInfo.length === 0) {
             return <p>Введите название города</p>
         }
 
         return cityInfo.map((city, index) => {
-            //debugger
+            debugger
             return <ResultItem key={index} cityDetail={city}/>;
         });
     };
