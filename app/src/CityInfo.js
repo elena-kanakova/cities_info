@@ -9,12 +9,14 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 class CityInfo extends React.Component {
     render() {
         return (
-            <Router>
-                <Switch>
-                    <Route path="/" exact component={SearchPage} />
-                    <Route path="/:id" component={CityPage} />
-                </Switch>
-            </Router>
+            <CityProvider.Provider value={}>
+                <Router>
+                    <Switch>
+                        <Route path="/" exact component={SearchPage} />
+                        <Route path="/:id" component={CityPage} />
+                    </Switch>
+                </Router>
+            </CityProvider.Provider>
         );
     }
 }

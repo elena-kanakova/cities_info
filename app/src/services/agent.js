@@ -1,9 +1,4 @@
-import React from 'react';
 import superagent from 'superagent';
-
-const CityContext = React.createContext({});
-const CityProvider = CityContext.Provider;
-const CityConsumer = CityContext.Consumer;
 
 class Agent extends React.Component {
     constructor(props) {
@@ -39,14 +34,6 @@ class Agent extends React.Component {
             console.log(e);
         }
     };
-
-    render() {
-        return (
-            <CityProvider.Provider value={this.state.cityList}>
-
-            </CityProvider.Provider>
-        );
-    }
 }
 
 export default new Agent();

@@ -4,6 +4,10 @@ import ResultItem from "../search-result/ResultItem";
 import Agent from "../../services/agent";
 import superagent from "superagent";
 
+const CityContext = React.createContext({});
+const CityProvider = CityContext.Provider;
+const CityConsumer = CityContext.Consumer;
+
 class SearchPage extends React.Component {
     constructor(props) {
         super(props);
@@ -19,6 +23,8 @@ class SearchPage extends React.Component {
 
         try {
             if (searchValue) {
+
+                const getCityInfo = await Agent.getCityInfo();
 
                 const cityNames = [];
 
