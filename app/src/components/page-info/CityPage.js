@@ -1,14 +1,41 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import './page-info.scss'
+import Agent from "../../services/agent";
 import superagent from "superagent"
 import SearchForm from "../search-form";
 import CityContext from "../../services/cityDataProvider";
+import SearchPage from "../search-page/SearchPage";
 
 /*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
 
 class CityPage extends React.Component {
     static contextType = CityContext;
+
+    constructor(props) {
+        super(props);
+        debugger;
+        const { id } = props.match.params;
+        const cityInfo = props.context.cityInfo.find(item => item.geoname_id.toString() === id );
+        debugger;
+        this.state = {
+            isLoading: !cityInfo,
+            cityInfo,
+        }
+    }
+
+    componentDidMount() {
+        if(this.state.isLoading) {
+            const getCityFullInfo = async (e) => {
+                const cityList = await superagent
+                    .get('https://api.teleport.org/api/cities/')
+                    .query({city_id: this.props.id})
+                    .then(result => result.map(item => item.body));
+
+                return Promise.all([cityList]);
+            };
+        }
+    }
 
     outputNameDictionary = {
         name: 'Название города',
@@ -36,8 +63,9 @@ class CityPage extends React.Component {
         };
 
         const userInfoItems = () => {
-            const { id } = this.props.match.params;
-            const cityInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
+            // const { id } = this.props.match.params;
+            // const cityInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
+            const cityInfo = this.state.cityInfo;
 debugger;
             return Object.keys(cityInfo).map((key) => (getUserItem(key, cityInfo[key])));
         };
@@ -51,7 +79,12 @@ debugger;
                     <div className="AppResult">
                         <div className='result_wrap'>
                             <div>
-                                {userInfoItems()}
+                                { this.state.isLoading
+                                    ?
+                                    'Загружаю...'
+                                    :
+                                    userInfoItems()
+                                }
                             </div>
                         </div>
                     </div>
