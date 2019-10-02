@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import PropTypes, {object} from 'prop-types'
 import './page-info.scss'
 import Agent from "../../services/agent";
 import superagent from "superagent"
@@ -12,29 +12,14 @@ import SearchPage from "../search-page/SearchPage";
 class CityPage extends React.Component {
     static contextType = CityContext;
 
-    constructor(props) {
+    constructor(props, context) {
         super(props);
         debugger;
-        const { id } = props.match.params;
-        const cityInfo = props.context.cityInfo.find(item => item.geoname_id.toString() === id );
-        debugger;
         this.state = {
-            isLoading: !cityInfo,
-            cityInfo,
-        }
-    }
+            infoItem: ''
+        };
 
-    componentDidMount() {
-        if(this.state.isLoading) {
-            const getCityFullInfo = async (e) => {
-                const cityList = await superagent
-                    .get('https://api.teleport.org/api/cities/')
-                    .query({city_id: this.props.id})
-                    .then(result => result.map(item => item.body));
-
-                return Promise.all([cityList]);
-            };
-        }
+        console.log(context);
     }
 
     outputNameDictionary = {
@@ -47,28 +32,80 @@ class CityPage extends React.Component {
         image: 'Фото:'
     };
 
+    getCityItem = (name, content) => {
+
+        let outputName = this.outputNameDictionary[name];
+
+        return (
+            <div className="basic-info_item flex">
+                <p className="basic-info_item-title">{outputName}</p>
+                <p className="basic-info_item-desc">{content}</p>
+            </div>
+        )
+    };
+
+    userInfoItems = () => {
+        const { id } = this.props.match.params;
+        const cityInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
+        debugger;
+        return Object.keys(cityInfo).map((key) => (this.getCityItem(key, cityInfo[key])));
+    };
+
+    showFullInfo = () => {
+        const fullInfo = this.state.infoItem;
+
+        return Object.keys(fullInfo).map((key) => (this.getCityItem(key, fullInfo[key])));
+    };
+
+    getCityFullInfo = async () => {
+        const id = `geonameid:${this.props.match.params.id}`;
+        debugger;
+        const cityFullInfo = await superagent
+            .get(`https://api.teleport.org/api/cities/${id}/`)
+            .then(result => result.body);
+
+        debugger;
+        const infoItem = {
+            name: cityFullInfo.name,
+            population: cityFullInfo.population,
+            geoname_id: cityFullInfo.geoname_id
+        };
+
+        const getLinkNames = Object.keys(cityFullInfo._links).map(item => {
+            debugger;
+            if (cityFullInfo._links[item].name) {
+                infoItem[item] = cityFullInfo._links[item].name;
+            }
+        });
+
+        let images;
+
+        if (cityFullInfo._links['city:urban_area']) {
+            images = await superagent.get(cityFullInfo._links['city:urban_area'].href)
+                .then(result => superagent.get(result.body._links['ua:images'].href))
+                .then(result => {
+                    infoItem.image = result.body.photos[0].image.web;
+                });
+        } else {
+            images = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
+        }
+
+        return infoItem;
+    };
+
+    componentDidMount() {
+        debugger;
+        if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
+            this.getCityFullInfo().then(r => this.setState({
+                infoItem: r
+            }));
+        } else {
+            this.userInfoItems();
+        }
+    }
+
     render() {
         debugger;
-
-        const getUserItem = (name, content) => {
-
-            let outputName = this.outputNameDictionary[name];
-
-            return (
-                <div className="basic-info_item flex">
-                    <p className="basic-info_item-title">{outputName}</p>
-                    <p className="basic-info_item-desc">{content}</p>
-                </div>
-            )
-        };
-
-        const userInfoItems = () => {
-            // const { id } = this.props.match.params;
-            // const cityInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
-            const cityInfo = this.state.cityInfo;
-debugger;
-            return Object.keys(cityInfo).map((key) => (getUserItem(key, cityInfo[key])));
-        };
 
         return (
             <div className="container">
@@ -79,12 +116,14 @@ debugger;
                     <div className="AppResult">
                         <div className='result_wrap'>
                             <div>
-                                { this.state.isLoading
+                                {
+                                    !this.context.cityInfo || this.context.cityInfo.length === 0
                                     ?
-                                    'Загружаю...'
+                                        this.showFullInfo()
                                     :
-                                    userInfoItems()
+                                    this.userInfoItems()
                                 }
+                                {true ? 'text' : null}
                             </div>
                         </div>
                     </div>
