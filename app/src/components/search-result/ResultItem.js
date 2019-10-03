@@ -1,17 +1,11 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import './search-result.scss'
 import {Link} from "react-router-dom";
 
 class ResultItem extends React.Component {
 
     outputNameDictionary = {
-        name: 'Название города',
-        population: 'Население',
-        'city:admin1_division': 'Админ округ',
         'city:country': 'Страна',
-        'city:timezone': 'Временная зона',
-        'city:urban_area': 'Район',
         image: 'Фото:'
     };
 
@@ -32,8 +26,10 @@ class ResultItem extends React.Component {
 
         const userInfoItems = () => {
             const cityInfo = this.props.cityDetail;
+            const unusedNames = ['image','geoname_id','city:urban_area','city:timezone','city:admin1_division','population', 'name'];
 
-            return Object.keys(cityInfo).map((key) => (getUserItem(key, cityInfo[key])));
+            return Object.keys(cityInfo).filter((key) =>
+                unusedNames.indexOf(key) === -1).map((key) => (getUserItem(key, cityInfo[key])));
         };
 
         return (

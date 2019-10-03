@@ -1,30 +1,25 @@
 import React from 'react'
-import PropTypes, {object} from 'prop-types'
 import './page-info.scss'
-import Agent from "../../services/agent";
 import superagent from "superagent"
-import SearchForm from "../search-form";
 import CityContext from "../../services/cityDataProvider";
-import SearchPage from "../search-page/SearchPage";
+//import StyleSheet from 'react-style';
 
 /*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
 
 class CityPage extends React.Component {
     static contextType = CityContext;
 
-    constructor(props, context) {
+    constructor(props) {
         super(props);
-        debugger;
         this.state = {
             infoItem: ''
         };
-
-        console.log(context);
     }
 
     outputNameDictionary = {
         name: 'Название города',
         population: 'Население',
+        geoname_id: 'Geo id',
         'city:admin1_division': 'Админ округ',
         'city:country': 'Страна',
         'city:timezone': 'Временная зона',
@@ -32,7 +27,7 @@ class CityPage extends React.Component {
         image: 'Фото:'
     };
 
-    getCityItem = (name, content) => {
+    showCityInfoItem = (name, content) => {
 
         let outputName = this.outputNameDictionary[name];
 
@@ -44,44 +39,44 @@ class CityPage extends React.Component {
         )
     };
 
-    userInfoItems = () => {
+    showCityInfo = () => {
         const { id } = this.props.match.params;
-        const cityInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
-        debugger;
-        return Object.keys(cityInfo).map((key) => (this.getCityItem(key, cityInfo[key])));
+        const cityContextInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
+        const cityNewInfo = this.state.infoItem;
+        const unusedNames = ['image','name'];
+
+        if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
+            return Object.keys(cityNewInfo).filter((key) =>
+                unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityNewInfo[key])))
+        } else {
+            return Object.keys(cityContextInfo).filter((key) =>
+                unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityContextInfo[key])))
+        }
     };
 
-    showFullInfo = () => {
-        const fullInfo = this.state.infoItem;
-
-        return Object.keys(fullInfo).map((key) => (this.getCityItem(key, fullInfo[key])));
-    };
-
-    getCityFullInfo = async () => {
+    getCityNewInfo = async () => {
         const id = `geonameid:${this.props.match.params.id}`;
-        debugger;
-        const cityFullInfo = await superagent
+
+        const cityNewInfo = await superagent
             .get(`https://api.teleport.org/api/cities/${id}/`)
             .then(result => result.body);
 
-        debugger;
         const infoItem = {
-            name: cityFullInfo.name,
-            population: cityFullInfo.population,
-            geoname_id: cityFullInfo.geoname_id
+            name: cityNewInfo.name,
+            population: cityNewInfo.population,
+            geoname_id: cityNewInfo.geoname_id
         };
 
-        const getLinkNames = Object.keys(cityFullInfo._links).map(item => {
-            debugger;
-            if (cityFullInfo._links[item].name) {
-                infoItem[item] = cityFullInfo._links[item].name;
+        const getLinkNames = Object.keys(cityNewInfo._links).map(item => {
+            if (cityNewInfo._links[item].name) {
+                infoItem[item] = cityNewInfo._links[item].name;
             }
         });
 
         let images;
 
-        if (cityFullInfo._links['city:urban_area']) {
-            images = await superagent.get(cityFullInfo._links['city:urban_area'].href)
+        if (cityNewInfo._links['city:urban_area']) {
+            images = await superagent.get(cityNewInfo._links['city:urban_area'].href)
                 .then(result => superagent.get(result.body._links['ua:images'].href))
                 .then(result => {
                     infoItem.image = result.body.photos[0].image.web;
@@ -90,41 +85,33 @@ class CityPage extends React.Component {
             images = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
         }
 
+        this.setState({
+            infoItem: infoItem
+        });
+
         return infoItem;
     };
 
     componentDidMount() {
-        debugger;
         if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
-            this.getCityFullInfo().then(r => this.setState({
-                infoItem: r
-            }));
-        } else {
-            this.userInfoItems();
+            this.getCityNewInfo().then(r => r)
         }
     }
 
     render() {
-        debugger;
+        const background = {
+            backgroundImage: `url("${this.state.infoItem.image}")`
+        };
 
         return (
             <div className="container">
-                <header id="header" className="flex center">
-                    <h1>Узнай про город своей мечты</h1>
+                <header id="header" className="flex center" style={background}>
+                    <h1>{this.state.infoItem.name}</h1>
                 </header>
                 <div className="AppContent">
                     <div className="AppResult">
                         <div className='result_wrap'>
-                            <div>
-                                {
-                                    !this.context.cityInfo || this.context.cityInfo.length === 0
-                                    ?
-                                        this.showFullInfo()
-                                    :
-                                    this.userInfoItems()
-                                }
-                                {true ? 'text' : null}
-                            </div>
+                            {this.showCityInfo()}
                         </div>
                     </div>
                 </div>
