@@ -12,7 +12,7 @@ class CityPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            infoItem: ''
+            cityInfo: ''
         };
     }
 
@@ -42,7 +42,7 @@ class CityPage extends React.Component {
     showCityInfo = () => {
         const { id } = this.props.match.params;
         const cityContextInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
-        const cityNewInfo = this.state.infoItem;
+        const cityNewInfo = this.state.cityInfo;
         const unusedNames = ['image','name'];
 
         if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
@@ -86,7 +86,7 @@ class CityPage extends React.Component {
         }
 
         this.setState({
-            infoItem: infoItem
+            cityInfo: infoItem
         });
 
         return infoItem;
@@ -100,13 +100,13 @@ class CityPage extends React.Component {
 
     render() {
         const background = {
-            backgroundImage: `url("${this.state.infoItem.image}")`
+            backgroundImage: `url("${this.state.cityInfo.image}")`
         };
 
         return (
             <div className="container">
                 <header id="header" className="flex center" style={background}>
-                    <h1>{this.state.infoItem.name}</h1>
+                    <h1>{this.state.cityInfo.name}</h1>
                 </header>
                 <div className="AppContent">
                     <div className="AppResult">
