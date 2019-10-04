@@ -1,6 +1,7 @@
 import React from 'react'
 import './page-info.scss'
 import superagent from "superagent"
+import Agent from "../../services/agent";
 import CityContext from "../../services/cityDataProvider";
 //import StyleSheet from 'react-style';
 
@@ -9,10 +10,20 @@ import CityContext from "../../services/cityDataProvider";
 class CityPage extends React.Component {
     static contextType = CityContext;
 
-    constructor(props) {
+    constructor(props, context) {
         super(props);
+        const id = props.match.params.id;
+        debugger;
+        const cityInfo = () => {
+            if(!context.cityInfo || context.cityInfo.length === 0) {
+                return [];
+            } else {
+                return context.cityInfo.find(item => item.geoname_id.toString() === id);
+            }
+        };
+        debugger;
         this.state = {
-            cityInfo: ''
+            cityInfo: cityInfo()
         };
     }
 
@@ -29,8 +40,10 @@ class CityPage extends React.Component {
 
     showCityInfoItem = (name, content) => {
 
+        debugger;
         let outputName = this.outputNameDictionary[name];
 
+        debugger;
         return (
             <div className="basic-info_item flex">
                 <p className="basic-info_item-title">{outputName}</p>
@@ -40,74 +53,45 @@ class CityPage extends React.Component {
     };
 
     showCityInfo = () => {
-        const { id } = this.props.match.params;
-        const cityContextInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
-        const cityNewInfo = this.state.cityInfo;
+        debugger;
+        const cityInfo = this.state.cityInfo;
         const unusedNames = ['image','name'];
 
-        if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
-            return Object.keys(cityNewInfo).filter((key) =>
-                unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityNewInfo[key])))
-        } else {
-            return Object.keys(cityContextInfo).filter((key) =>
-                unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityContextInfo[key])))
-        }
+        debugger;
+        return Object.keys(cityInfo).filter((key) =>
+            unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityInfo[key])))
+
     };
 
-    getCityNewInfo = async () => {
-        const id = `geonameid:${this.props.match.params.id}`;
-
-        const cityNewInfo = await superagent
-            .get(`https://api.teleport.org/api/cities/${id}/`)
-            .then(result => result.body);
-
-        const infoItem = {
-            name: cityNewInfo.name,
-            population: cityNewInfo.population,
-            geoname_id: cityNewInfo.geoname_id
-        };
-
-        const getLinkNames = Object.keys(cityNewInfo._links).map(item => {
-            if (cityNewInfo._links[item].name) {
-                infoItem[item] = cityNewInfo._links[item].name;
-            }
-        });
-
-        let images;
-
-        if (cityNewInfo._links['city:urban_area']) {
-            images = await superagent.get(cityNewInfo._links['city:urban_area'].href)
-                .then(result => superagent.get(result.body._links['ua:images'].href))
-                .then(result => {
-                    infoItem.image = result.body.photos[0].image.web;
-                });
-        } else {
-            images = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
-        }
-
-        this.setState({
-            cityInfo: infoItem
-        });
-
-        return infoItem;
-    };
-
-    componentDidMount() {
-        if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
-            this.getCityNewInfo().then(r => r)
-        }
-    }
-
-    render() {
+    showCityTitle = () => {
+        debugger;
         const background = {
             backgroundImage: `url("${this.state.cityInfo.image}")`
         };
 
+        debugger;
+        return (
+            <header id="header" className="flex center" style={background}>
+                <h1>{this.state.cityInfo.name}</h1>
+            </header>
+        )
+    };
+
+    componentDidMount() {
+        if(this.state.cityInfo.length === 0) {
+            const getCityNewInfo = Agent.getCityNewInfo(this.props.match.params.id).then(r => r);
+            this.setState({
+                cityInfo: getCityNewInfo
+            })
+        }
+    }
+
+    render() {
+
+        debugger;
         return (
             <div className="container">
-                <header id="header" className="flex center" style={background}>
-                    <h1>{this.state.cityInfo.name}</h1>
-                </header>
+                {this.showCityTitle()}
                 <div className="AppContent">
                     <div className="AppResult">
                         <div className='result_wrap'>
