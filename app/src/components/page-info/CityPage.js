@@ -3,7 +3,6 @@ import './page-info.scss'
 import superagent from "superagent"
 import Agent from "../../services/agent";
 import CityContext from "../../services/cityDataProvider";
-//import StyleSheet from 'react-style';
 
 /*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
 
@@ -13,7 +12,6 @@ class CityPage extends React.Component {
     constructor(props, context) {
         super(props);
         const id = props.match.params.id;
-        debugger;
         const cityInfo = () => {
             if(!context.cityInfo || context.cityInfo.length === 0) {
                 return [];
@@ -21,7 +19,6 @@ class CityPage extends React.Component {
                 return context.cityInfo.find(item => item.geoname_id.toString() === id);
             }
         };
-        debugger;
         this.state = {
             cityInfo: cityInfo()
         };
@@ -39,11 +36,8 @@ class CityPage extends React.Component {
     };
 
     showCityInfoItem = (name, content) => {
-
-        debugger;
         let outputName = this.outputNameDictionary[name];
 
-        debugger;
         return (
             <div className="basic-info_item flex">
                 <p className="basic-info_item-title">{outputName}</p>
@@ -53,23 +47,19 @@ class CityPage extends React.Component {
     };
 
     showCityInfo = () => {
-        debugger;
         const cityInfo = this.state.cityInfo;
         const unusedNames = ['image','name'];
 
-        debugger;
         return Object.keys(cityInfo).filter((key) =>
             unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityInfo[key])))
 
     };
 
     showCityTitle = () => {
-        debugger;
         const background = {
             backgroundImage: `url("${this.state.cityInfo.image}")`
         };
 
-        debugger;
         return (
             <header id="header" className="flex center" style={background}>
                 <h1>{this.state.cityInfo.name}</h1>
@@ -77,18 +67,20 @@ class CityPage extends React.Component {
         )
     };
 
+    getCityNewInfo = () => Agent.getCityNewInfo(this.props.match.params.id).then(r =>
+        this.setState({
+            cityInfo: r
+        })
+    );
+
     componentDidMount() {
         if(this.state.cityInfo.length === 0) {
-            const getCityNewInfo = Agent.getCityNewInfo(this.props.match.params.id).then(r => r);
-            this.setState({
-                cityInfo: getCityNewInfo
-            })
+            this.getCityNewInfo();
         }
     }
 
     render() {
 
-        debugger;
         return (
             <div className="container">
                 {this.showCityTitle()}
