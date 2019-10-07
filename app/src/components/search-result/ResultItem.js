@@ -9,7 +9,7 @@ class ResultItem extends React.Component {
         image: 'Фото:'
     };
 
-    elGetUserItem = (name, content) => {
+    elShowCityInfo = (name, content) => {
         let outputName = this.outputNameDictionary[name];
 
         return (
@@ -20,12 +20,12 @@ class ResultItem extends React.Component {
         )
     };
 
-    getUserInfoItems = () => {
+    showCityInfo = () => {
         const cityInfo = this.props.cityDetail;
         const unusedNames = ['image','geoname_id','city:urban_area','city:timezone','city:admin1_division','population', 'name'];
 
         return Object.keys(cityInfo).filter((key) =>
-            unusedNames.indexOf(key) === -1).map((key) => (this.elGetUserItem(key, cityInfo[key])));
+            unusedNames.indexOf(key) === -1).map((key) => (this.elShowCityInfo(key, cityInfo[key])));
     };
 
     render() {
@@ -33,7 +33,7 @@ class ResultItem extends React.Component {
             <article className="result-item">
                 <h3>Название города: {this.props.cityDetail.name}</h3>
                 <div className="basic-info_wrap">
-                    {this.getUserInfoItems()}
+                    {this.showCityInfo()}
                     <div className="basic-info_item item-photo flex">
                         <img src={this.props.cityDetail.image} alt={this.props.cityDetail.name}/>
                     </div>

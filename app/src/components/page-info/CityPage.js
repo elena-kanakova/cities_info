@@ -35,7 +35,7 @@ class CityPage extends React.Component {
         image: 'Фото:'
     };
 
-    showCityInfoItem = (name, content) => {
+    elShowCityInfo = (name, content) => {
         let outputName = this.outputNameDictionary[name];
 
         return (
@@ -51,7 +51,7 @@ class CityPage extends React.Component {
         const unusedNames = ['image','name'];
 
         return Object.keys(cityInfo).filter((key) =>
-            unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityInfo[key])))
+            unusedNames.indexOf(key) === -1).map((key) => (this.elShowCityInfo(key, cityInfo[key])))
 
     };
 

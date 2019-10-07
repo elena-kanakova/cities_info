@@ -11,7 +11,7 @@ class SearchForm extends React.Component {
                         <input type="text" id="search-text" name="city" />
                     </div>
                     <div className="btn-submit_wrap">
-                        <button type="submit">Найти</button>
+                        <button>Найти</button>
                     </div>
                 </form>
             </div>

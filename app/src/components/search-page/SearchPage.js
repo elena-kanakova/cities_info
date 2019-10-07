@@ -19,10 +19,7 @@ class SearchPage extends React.Component {
         try {
             if (searchValue) {
                 const getCityInfo = await Agent.getCityInfo(e);
-                debugger;
                 const cityNames = [];
-
-                debugger;
                 const cityItemList = getCityInfo[0].map(city => {
                     const cityItem = {
                         name: city.name,
@@ -32,14 +29,12 @@ class SearchPage extends React.Component {
 
                     let images;
 
-                    debugger;
                     Object.keys(city._links).forEach((_linkName) => {
                         if (city._links[_linkName].name) {
                             cityItem[_linkName] = city._links[_linkName].name;
                         }
                     });
 
-                    debugger;
                     if (city._links['city:urban_area']) {
                         images = superagent.get(city._links['city:urban_area'].href)
                             .then(result => superagent.get(result.body._links['ua:images'].href))
@@ -50,14 +45,11 @@ class SearchPage extends React.Component {
                         cityItem.image = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
                     }
 
-                    debugger;
                     cityNames.push(cityItem);
 
-                    debugger;
                     return Promise.all([images]);
                 });
 
-                debugger;
                 Promise.all(cityItemList).then(result => {
                     this.props.getCityData(cityNames);
                 });
@@ -68,23 +60,20 @@ class SearchPage extends React.Component {
         }
     };
 
-    debugger;
-    showInfo = () => {
+    showResult = () => {
         const cityInfo = this.context.cityInfo;
-        debugger
 
         if (!cityInfo || cityInfo.length === 0) {
             return <p>Введите название города</p>
         }
 
         return cityInfo.map((city, index) => {
-            debugger
             return <ResultItem key={index} cityDetail={city}/>;
         });
     };
 
     render() {
-        debugger
+
         return (
             <div className="container">
                 <header id="header" className="flex center">
@@ -97,7 +86,7 @@ class SearchPage extends React.Component {
                     <div className="AppResult">
                         <div className='result_wrap'>
                             <div>
-                                {this.showInfo()}
+                                {this.showResult()}
                             </div>
                         </div>
                     </div>
