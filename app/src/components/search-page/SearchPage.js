@@ -79,18 +79,12 @@ class SearchPage extends React.Component {
                 <header id="header" className="flex center">
                     <h1>Узнай про город своей мечты</h1>
                 </header>
-                <div className="AppContent">
-                    <div className="AppForm">
-                        <SearchForm city={this.getCityInfo}/>
+                <section id="content">
+                    <SearchForm city={this.getCityInfo}/>
+                    <div className='result_wrap'>
+                        {this.showResult()}
                     </div>
-                    <div className="AppResult">
-                        <div className='result_wrap'>
-                            <div>
-                                {this.showResult()}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </section>
             </div>
         );
     }

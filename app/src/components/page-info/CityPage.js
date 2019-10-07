@@ -1,5 +1,5 @@
 import React from 'react'
-import './page-info.scss'
+import './page-info.pcss'
 import superagent from "superagent"
 import Agent from "../../services/agent";
 import CityContext from "../../services/cityDataProvider";
@@ -84,13 +84,9 @@ class CityPage extends React.Component {
         return (
             <div className="container">
                 {this.showCityTitle()}
-                <div className="AppContent">
-                    <div className="AppResult">
-                        <div className='result_wrap'>
-                            {this.showCityInfo()}
-                        </div>
-                    </div>
-                </div>
+                <section id="basic_info" className="content_wrap">
+                    {this.showCityInfo()}
+                </section>
             </div>
         )
     }
