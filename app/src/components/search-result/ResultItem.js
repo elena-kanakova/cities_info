@@ -1,5 +1,5 @@
 import React from 'react'
-import './search-result.pcss'
+import './search-result.scss'
 import {Link} from "react-router-dom";
 
 class ResultItem extends React.Component {

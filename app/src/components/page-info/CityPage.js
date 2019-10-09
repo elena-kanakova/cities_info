@@ -1,5 +1,5 @@
 import React from 'react'
-import './page-info.pcss'
+import './page-info.scss'
 import superagent from "superagent"
 import Agent from "../../services/agent";
 import CityContext from "../../services/cityDataProvider";

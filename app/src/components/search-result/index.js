@@ -1,6 +1,6 @@
 import React from 'react'
 import ResultItem from './ResultItem'
-import Styles from './search-result.pcss'
+import Styles from './search-result.scss'
 
 class SearchResult extends React.Component {
     render() {
