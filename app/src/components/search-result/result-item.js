@@ -1,8 +1,18 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import './search-result.scss'
 
 class ResultItem extends React.Component {
-    //debugger
+    static propTypes = {
+      cityDetail: PropTypes.shape({
+          name: PropTypes.string.isRequired,
+          urbanCountry: PropTypes.string.isRequired,
+          urbanTimezone: PropTypes.string.isRequired,
+          population: PropTypes.number.isRequired,
+          image: PropTypes.string.isRequired
+        }).isRequired
+    };
+
     render() {
         debugger;
 
@@ -12,11 +22,11 @@ class ResultItem extends React.Component {
                 <div className="basic-info_wrap">
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Местоположение:</p>
-                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanCountry.name}</p>
+                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanCountry}</p>
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Временная зона:</p>
-                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanTimezone.iana_name}</p>
+                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanTimezone}</p>
                     </div>
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Население:</p>
@@ -25,8 +35,8 @@ class ResultItem extends React.Component {
                     <div className="basic-info_item flex">
                         <p className="basic-info_item-title">Фото:</p>
                     </div>
-                    <div className="basic-info_item flex">
-                        <img src={this.props.cityDetail.images.photos[0].image.web} alt={this.props.cityDetail.name}/>
+                    <div className="basic-info_item item-photo flex">
+                        <img src={this.props.cityDetail.image} alt={this.props.cityDetail.name}/>
                     </div>
                 </div>
                 <div className="basic-info_link-full">
