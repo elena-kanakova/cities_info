@@ -27,98 +27,29 @@ class CityInfo extends React.Component {
                     .then(({body}) => Promise.all(body._embedded['city:search-results'].map(item => superagent.get(item._links['city:item'].href))))
                     .then(result => result.map(item => item.body));
 
+                console.log(cityList);
 
                 const urbanArea = await Promise.all(cityList.map(city => superagent.get(city._links['city:urban_area'].href)))
                     .then(result => result.map(item => item.body));
 
-                /*console.log(cities);
-                console.log(cityDetails);
-
-
-                let mumu = {
-                    'a': {'name': '1'},
-                    'b': {'name': '2'}
-                };
-
-                Object.keys( mumu).map((key) => {
-                    let mumuObj =  mumu[key];
-                    console.log(mumuObj);
-                });
-
-                let filteredCityList = [];
-                cityList.forEach((city) => {
-                    const {name, geoname_id, population} = city;
-
-                    debugger;
-
-                    filteredCityList.push({
-                        name: name,
-                        continent: '',//city.continent,
-                        population: population,
-                        geoname_id: geoname_id
-                    });
-                });
-
-                if (cityList)
-                    this.setState({cityList, filteredCityList});*/
-                console.log('cityList - ', typeof cityList, cityList);
-
                 debugger;
-                cityList.map((city) => {
-                    let {name, population} = city;
-
-                    this.setState({
-                        cityInfo: {
-                            name: name,
-                            population: population
-                        }
-                    });
-                })
+                this.setState({
+                    cityInfo: cityList
+                });
             }
         } catch (e) {
-            console.log('error');
+            console.log(e);
         }
     };
-
-   /* setCityInfo = () => {
-        this.getCityInfo().then((cityInfo) => {
-            const { name, population } = cityInfo;
-
-            this.setState ({
-                cityInfo: {
-                    name: name,
-                    continent: this.body.continent,
-                    population: population
-                }
-            })
-        });
-    };*/
-
-    /*getCityItem = (name) => {
-        return (
-            <ResultItem name={name}/>
-        )
-    };*/
 
     showInfo = () => {
         const cityList = this.state.cityInfo;
         debugger
 
         if (cityList)
-            return Object.keys(cityList).map((key) => {
-                let cities = cityList[key];
-                console.log(cities);
-
-                return <ResultItem key={key} cityInfo={cities}/>
+            return cityList.map((city, index) => {
+                return <ResultItem index={index} cityDetail={city}/>
             });
-        /*return Object.keys(cityInfo).map((item, index) => {
-            const {image, timeZone, population, name, continent} = '';
-
-            debugger
-            let mumuObj = {name: "123", 'image': '11'};
-            return <ResultItem key={index} mumu2={mumuObj} image={image} name={item} continent={continent}
-                               timeZone={timeZone} population={population}/>
-        });*/
     };
 
     render() {
@@ -135,7 +66,7 @@ class CityInfo extends React.Component {
                     <div className="AppResult">
                         <div className='result_wrap'>
                             <div>
-                                Имя: {this.showInfo()}
+                                {this.showInfo()}
                             </div>
                         </div>
                     </div>
