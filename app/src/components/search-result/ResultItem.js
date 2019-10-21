@@ -4,7 +4,7 @@ import './search-result.scss'
 import {Link} from "react-router-dom";
 
 class ResultItem extends React.Component {
-    static propTypes = {
+    /*static propTypes = {
       cityDetail: PropTypes.shape({
           name: PropTypes.string.isRequired,
           urbanCountry: PropTypes.string.isRequired,
@@ -12,7 +12,7 @@ class ResultItem extends React.Component {
           population: PropTypes.number.isRequired,
           image: PropTypes.string.isRequired
         }).isRequired
-    };
+    };*/
 
     outputNameDictionary = {
         name: 'Название города',
@@ -21,7 +21,7 @@ class ResultItem extends React.Component {
         'city:country': 'Страна',
         'city:timezone': 'Временная зона',
         'city:urban_area': 'Район',
-        image: 'Фото'
+        image: 'Фото:'
     };
 
     render() {
@@ -50,17 +50,6 @@ class ResultItem extends React.Component {
                 <h3>Название города: {this.props.cityDetail.name}</h3>
                 <div className="basic-info_wrap">
                     {userInfoItems()}
-                   {/*<div className="basic-info_item flex">
-                        <p className="basic-info_item-title">Временная зона:</p>
-                        <p className="basic-info_item-desc">{this.props.cityDetail.urbanTimezone}</p>
-                    </div>*/}
-                    {/*<div className="basic-info_item flex">
-                        <p className="basic-info_item-title">Население:</p>
-                        <p className="basic-info_item-desc">{this.props.cityDetail.population}</p>
-                    </div>*/}
-                    <div className="basic-info_item flex">
-                        <p className="basic-info_item-title">Фото:</p>
-                    </div>
                     <div className="basic-info_item item-photo flex">
                         <img src={this.props.cityDetail.image} alt={this.props.cityDetail.name}/>
                     </div>

@@ -2,11 +2,8 @@ import React from 'react'
 import SearchForm from '../search-form'
 import ResultItem from "../search-result/ResultItem";
 import Agent from "../../services/agent";
-import PropTypes from "prop-types";
 import superagent from "superagent";
-import {Link} from 'react-router-dom';
 
-/*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
 const CityListData = React.createContext;
 
 class SearchPage extends React.Component {
@@ -32,7 +29,6 @@ class SearchPage extends React.Component {
                 console.log(cityList);
 
                 const cityNames = [];
-                const cityAPILinks = {};
 
                 const cityItemList = cityList.map(city => {
                     const cityItem = {
@@ -40,30 +36,14 @@ class SearchPage extends React.Component {
                         population: city.population
                     };
 
-                    cityNames.push(cityItem);
-
-
-                    let images/*, country, timeZone*/;
-                    let nameLink = cityItem.nameLink;
+                    let images;
                     let link = cityItem.link;
 
-                    const showCityLinks = (name, link) => {
-                        return console.log(city.name, ':\n', 'API: ', cityItem.nameLink = name, 'name: ', cityItem.link = link);
-                    };
-                    Object.keys(city._links).map((_linkName) => {
+                    const getLinkNames = Object.keys(city._links).map((_linkName) => {
                         if (city._links[_linkName].name) {
-                            let value = city._links[_linkName].name;
-
-                            cityItem[_linkName] = value;
+                            cityItem[_linkName] = city._links[_linkName].name;
                         }
                     });
-
-                                        const getLinkNames = () => {
-                        return Object.keys(city._links).map((key) => {
-                            if (city._links[key].name) showCityLinks(key, city._links[key].name)
-                        })
-                    };
-                    getLinkNames();
 
                     if (city._links['city:urban_area']) {
                         images = superagent.get(city._links['city:urban_area'].href)
@@ -75,28 +55,10 @@ class SearchPage extends React.Component {
                         cityItem.image = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
                     }
 
-                    /*if (city._links['city:country']) {
-                        country = superagent.get(city._links['city:country'].href)
-                            .then(result => {
-                                cityItem.urbanCountry = result.body.name;
-                            });
-                    } else {
-                        cityItem.urbanCountry = 'Информация по местоположению отсуствует'
-                    }
+                    cityNames.push(cityItem);
 
-                    if (city._links['city:timezone']) {
-                        timeZone = superagent.get(city._links['city:timezone'].href)
-                            .then(result => {
-                                cityItem.urbanTimezone = result.body.iana_name;
-                            });
-                    } else {
-                        cityItem.urbanCountry = 'Информация по временной зоне отсуствует'
-                    }*/
-
-                    return Promise.all([images, /*country, timeZone,*/ nameLink, link]);
+                    return Promise.all([images, getLinkNames, link]);
                 });
-
-                console.log('cityAPILinks: ', cityAPILinks);
 
                 Promise.all(cityItemList).then(result => this.setState({
                     cityInfo: cityNames
