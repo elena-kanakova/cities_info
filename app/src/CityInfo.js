@@ -18,19 +18,36 @@ class CityInfo extends React.Component {
 
     getCityInfo = async (e) => {
         e.preventDefault();
-        const city = e.target.elements.city.value;
+        const inputValue = e.target.elements.city.value;
         try {
-            if (city) {
+            if (inputValue) {
                 const cityList = await superagent
                     .get('https://api.teleport.org/api/cities/')
-                    .query({search: city})
+                    .query({search: inputValue})
                     .then(({body}) => Promise.all(body._embedded['city:search-results'].map(item => superagent.get(item._links['city:item'].href))))
                     .then(result => result.map(item => item.body));
 
                 console.log(cityList);
 
-                const urbanArea = await Promise.all(cityList.map(city => superagent.get(city._links['city:urban_area'].href)))
-                    .then(result => result.map(item => item.body));
+                await Promise.all(cityList.map(city => superagent.get(city._links['city:urban_area'].href)
+                    .then(result => {
+                        city.urbanArea = result.body;
+                    })));
+
+                await Promise.all(cityList.map(city => superagent.get(city._links['city:country'].href)
+                    .then(result => {
+                        city.urbanCountry = result.body;
+                    })));
+
+                await Promise.all(cityList.map(city => superagent.get(city._links['city:timezone'].href)
+                    .then(result => {
+                        city.urbanTimezone = result.body;
+                    })));
+
+                await Promise.all(cityList.map(city => superagent.get(city._links['city:alternate-names'].href)
+                    .then(result => {
+                        city.urbanAlternateNames = result.body;
+                    })));
 
                 debugger;
                 this.setState({
@@ -43,12 +60,12 @@ class CityInfo extends React.Component {
     };
 
     showInfo = () => {
-        const cityList = this.state.cityInfo;
+        const cityInfo = this.state.cityInfo;
         debugger
 
-        if (cityList)
-            return cityList.map((city, index) => {
-                return <ResultItem index={index} cityDetail={city}/>
+        if (cityInfo)
+            return cityInfo.map((city, index) => {debugger
+                return <ResultItem key={index} cityDetail={city}/>;
             });
     };
 
