@@ -18,7 +18,6 @@ class SearchPage extends React.Component {
 
         try {
             if (searchValue) {
-
                 const getCityInfo = await Agent.getCityInfo(e);
                 debugger;
                 const cityNames = [];
@@ -32,10 +31,9 @@ class SearchPage extends React.Component {
                     };
 
                     let images;
-                    let link = cityItem.link;
 
                     debugger;
-                    const getLinkNames = Object.keys(city._links).map((_linkName) => {
+                    Object.keys(city._links).forEach((_linkName) => {
                         if (city._links[_linkName].name) {
                             cityItem[_linkName] = city._links[_linkName].name;
                         }
@@ -56,7 +54,7 @@ class SearchPage extends React.Component {
                     cityNames.push(cityItem);
 
                     debugger;
-                    return Promise.all([images, getLinkNames, link]);
+                    return Promise.all([images]);
                 });
 
                 debugger;
