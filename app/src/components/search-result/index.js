@@ -6,9 +6,7 @@ class SearchResult extends React.Component {
     render() {
         return (
             <div className='result_wrap'>
-                <div>
-                    <ResultItem {...this.props} />
-                </div>
+                <ResultItem {...this.props} />
             </div>
         )
     }

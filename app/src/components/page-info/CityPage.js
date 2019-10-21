@@ -1,6 +1,7 @@
 import React from 'react'
 import './page-info.scss'
 import superagent from "superagent"
+import Agent from "../../services/agent";
 import CityContext from "../../services/cityDataProvider";
 
 /*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
@@ -8,13 +9,18 @@ import CityContext from "../../services/cityDataProvider";
 class CityPage extends React.Component {
     static contextType = CityContext;
 
-    constructor(props,context) {
+    constructor(props, context) {
         super(props);
-        debugger;
         const id = props.match.params.id;
-        const cityInfoContext = context.cityInfo.find(item => item.geoname_id.toString() === id );
+        const cityInfo = () => {
+            if(!context.cityInfo || context.cityInfo.length === 0) {
+                return [];
+            } else {
+                return context.cityInfo.find(item => item.geoname_id.toString() === id);
+            }
+        };
         this.state = {
-            cityInfo: cityInfoContext
+            cityInfo: cityInfo()
         };
     }
 
@@ -29,18 +35,7 @@ class CityPage extends React.Component {
         image: 'Фото:'
     };
 
-    getCityInfo = () => {
-        const id = this.props.match.params.id;
-        const cityInfoContext = this.context.cityInfo.find(item => item.geoname_id.toString() === id );
-        debugger;
-
-        if(!cityInfoContext || cityInfoContext.length === 0) {
-            return this.getCityNewInfo().then(r => r)
-        }
-    };
-
-    showCityInfoItem = (name, content) => {
-
+    elShowCityInfo = (name, content) => {
         let outputName = this.outputNameDictionary[name];
 
         return (
@@ -52,76 +47,48 @@ class CityPage extends React.Component {
     };
 
     showCityInfo = () => {
-        debugger;
         const cityInfo = this.state.cityInfo;
+        const unusedNames = ['image','name'];
+
+        return Object.keys(cityInfo).filter((key) =>
+            unusedNames.indexOf(key) === -1).map((key) => (this.elShowCityInfo(key, cityInfo[key])))
+
+    };
+
+    showCityTitle = () => {
         const background = {
             backgroundImage: `url("${this.state.cityInfo.image}")`
         };
-        const unusedNames = ['image','name'];
-        debugger;
 
         return (
-            <div className="container">
-                <header id="header" className="flex center" style={background}>
-                    <h1>{this.state.cityInfo.name}</h1>
-                </header>
-                <div className="AppContent">
-                    <div className="AppResult">
-                        <div className='result_wrap'>
-                            {Object.keys(cityInfo).filter((key) =>
-                            unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityInfo[key])))}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <header id="header" className="flex center" style={background}>
+                <h1>{this.state.cityInfo.name}</h1>
+            </header>
         )
     };
 
-    getCityNewInfo = async () => {
-        const id = `geonameid:${this.props.match.params.id}`;
-
-        const cityNewInfo = await superagent
-            .get(`https://api.teleport.org/api/cities/${id}/`)
-            .then(result => result.body);
-
-        const infoItem = {
-            name: cityNewInfo.name,
-            population: cityNewInfo.population,
-            geoname_id: cityNewInfo.geoname_id
-        };
-
-        const getLinkNames = Object.keys(cityNewInfo._links).map(item => {
-            if (cityNewInfo._links[item].name) {
-                infoItem[item] = cityNewInfo._links[item].name;
-            }
-        });
-
-        let images;
-
-        if (cityNewInfo._links['city:urban_area']) {
-            images = await superagent.get(cityNewInfo._links['city:urban_area'].href)
-                .then(result => superagent.get(result.body._links['ua:images'].href))
-                .then(result => {
-                    infoItem.image = result.body.photos[0].image.web;
-                });
-        } else {
-            images = 'http://enjoy-summer.ru/image/cache/img_thumb_big.php-600x315.jpeg'
-        }
-
+    getCityNewInfo = () => Agent.getCityNewInfo(this.props.match.params.id).then(r =>
         this.setState({
-            cityInfo: infoItem
-        });
-
-        return infoItem;
-    };
+            cityInfo: r
+        })
+    );
 
     componentDidMount() {
-        this.showCityInfo()
+        if(this.state.cityInfo.length === 0) {
+            this.getCityNewInfo();
+        }
     }
 
     render() {
-        debugger;
-        return this.getCityInfo()
+
+        return (
+            <div className="container">
+                {this.showCityTitle()}
+                <section id="basic_info" className="content_wrap">
+                    {this.showCityInfo()}
+                </section>
+            </div>
+        )
     }
 }
 
