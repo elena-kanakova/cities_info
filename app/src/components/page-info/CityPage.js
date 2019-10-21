@@ -2,17 +2,19 @@ import React from 'react'
 import './page-info.scss'
 import superagent from "superagent"
 import CityContext from "../../services/cityDataProvider";
-//import StyleSheet from 'react-style';
 
 /*const API_KEY = '6730c8df6acdcc426b019e426791955d';*/
 
 class CityPage extends React.Component {
     static contextType = CityContext;
 
-    constructor(props) {
+    constructor(props,context) {
         super(props);
+        debugger;
+        const id = props.match.params.id;
+        const cityInfoContext = context.cityInfo.find(item => item.geoname_id.toString() === id );
         this.state = {
-            cityInfo: ''
+            cityInfo: cityInfoContext
         };
     }
 
@@ -25,6 +27,16 @@ class CityPage extends React.Component {
         'city:timezone': 'Временная зона',
         'city:urban_area': 'Район',
         image: 'Фото:'
+    };
+
+    getCityInfo = () => {
+        const id = this.props.match.params.id;
+        const cityInfoContext = this.context.cityInfo.find(item => item.geoname_id.toString() === id );
+        debugger;
+
+        if(!cityInfoContext || cityInfoContext.length === 0) {
+            return this.getCityNewInfo().then(r => r)
+        }
     };
 
     showCityInfoItem = (name, content) => {
@@ -40,18 +52,29 @@ class CityPage extends React.Component {
     };
 
     showCityInfo = () => {
-        const { id } = this.props.match.params;
-        const cityContextInfo = this.context.cityInfo.find(item => item.geoname_id.toString() === id);
-        const cityNewInfo = this.state.cityInfo;
+        debugger;
+        const cityInfo = this.state.cityInfo;
+        const background = {
+            backgroundImage: `url("${this.state.cityInfo.image}")`
+        };
         const unusedNames = ['image','name'];
+        debugger;
 
-        if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
-            return Object.keys(cityNewInfo).filter((key) =>
-                unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityNewInfo[key])))
-        } else {
-            return Object.keys(cityContextInfo).filter((key) =>
-                unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityContextInfo[key])))
-        }
+        return (
+            <div className="container">
+                <header id="header" className="flex center" style={background}>
+                    <h1>{this.state.cityInfo.name}</h1>
+                </header>
+                <div className="AppContent">
+                    <div className="AppResult">
+                        <div className='result_wrap'>
+                            {Object.keys(cityInfo).filter((key) =>
+                            unusedNames.indexOf(key) === -1).map((key) => (this.showCityInfoItem(key, cityInfo[key])))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
     };
 
     getCityNewInfo = async () => {
@@ -93,30 +116,12 @@ class CityPage extends React.Component {
     };
 
     componentDidMount() {
-        if(!this.context.cityInfo || this.context.cityInfo.length === 0) {
-            this.getCityNewInfo().then(r => r)
-        }
+        this.showCityInfo()
     }
 
     render() {
-        const background = {
-            backgroundImage: `url("${this.state.cityInfo.image}")`
-        };
-
-        return (
-            <div className="container">
-                <header id="header" className="flex center" style={background}>
-                    <h1>{this.state.cityInfo.name}</h1>
-                </header>
-                <div className="AppContent">
-                    <div className="AppResult">
-                        <div className='result_wrap'>
-                            {this.showCityInfo()}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        )
+        debugger;
+        return this.getCityInfo()
     }
 }
 
