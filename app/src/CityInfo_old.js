@@ -3,7 +3,7 @@ import './index.css';
 import SearchForm from './components/search-form/index'
 //import SearchResult from './components/search-result/index'
 import superagent from "superagent";
-import ResultItem from "./components/search-result/result-item";
+import ResultItem from "./components/search-result/ResultItem";
 
 const API_KEY = '6730c8df6acdcc426b019e426791955d';
 
